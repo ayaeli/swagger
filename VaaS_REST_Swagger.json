@@ -5,11 +5,11 @@
         "description": "IBM Interactive Maps as-a-Service REST APIs",
         "version": "1.0.0"
     },
-    "host": "maps.mybluemix.net",
+    "host": "vaas-ic.mybluemix.net",
     "schemes": [
         "http"
     ],
-    "basePath": "/rest",
+    "basePath": "/v1/rest",
     "produces": [
         "application/json"
     ],
@@ -18,6 +18,9 @@
             "get": {
                 "summary": "Maps",
                 "description": "List maps.\n",
+                "produces": [
+                    "application/json"
+                ],
                 "parameters": [
                     {
                         "name": "q",
@@ -47,6 +50,13 @@
                         "description": "TBD.",
                         "required": false,
                         "type": "string"
+                    },
+                    {
+                        "name": "tenantId",
+                        "in": "path",
+                        "description": "tenant url paths",
+                        "required": true,
+                        "type": "string"
                     }
                 ],
                 "tags": [
@@ -75,14 +85,28 @@
             "post": {
                 "summary": "Create Map",
                 "description": "Create a new map",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
                 "parameters": [
                     {
-                        "name": "map",
+                        "name": "body",
                         "in": "body",
-                        "description": "The geojson representation of the new map to create",
+                        "description": "A map json definition object",
                         "required": true,
-                        "type": "string",
-                        "format": "json"
+                        "schema": {
+                            "$ref": "#/definitions/Map"
+                        }
+                    },
+                    {
+                        "name": "tenantId",
+                        "in": "path",
+                        "description": "tenant url paths",
+                        "required": true,
+                        "type": "string"
                     }
                 ],
                 "tags": [
@@ -101,15 +125,125 @@
         "/{tenantId}/maps/{mapId}": {
             "get": {
                 "summary": "View Map",
-                "description": "View map as json",
-                "tags": [
-                    "Maps"
+                "description": "View map as an application or json",
+                "produces": [
+                    "application/json",
+                    "text/html"
                 ],
                 "responses": {
                     "200": {
-                        "description": "A json representation of the map"
+                        "description": "An HTML interactive map, or the JSON specification of the map (depending on the Accept header)"
                     }
-                }
+                },
+                "parameters": [
+                    {
+                        "name": "mapId",
+                        "in": "path",
+                        "description": "identifier of the map to fetch",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "name": "tenantId",
+                        "in": "path",
+                        "description": "tenant url paths",
+                        "required": true,
+                        "type": "string"
+                    }
+                ],
+                "tags": [
+                    "Maps"
+                ]
+            },
+            "put": {
+                "summary": "Update Map",
+                "description": "replace the specification of the map object",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "successful operation"
+                    }
+                },
+                "parameters": [
+                    {
+                        "name": "tenantId",
+                        "in": "path",
+                        "description": "tenant url paths",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "name": "mapId",
+                        "in": "path",
+                        "description": "identifier of the map to replace",
+                        "required": true,
+                        "type": "string"
+                    }
+                ]
+            },
+            "delete": {
+                "summary": "delete map",
+                "description": "deletes the map and its dependant layers",
+                "responses": {
+                    "200": {
+                        "description": "successful operation"
+                    }
+                },
+                "parameters": [
+                    {
+                        "name": "tenantId",
+                        "in": "path",
+                        "description": "tenant url paths",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "name": "mapId",
+                        "in": "path",
+                        "description": "identifier of the map to delete",
+                        "required": true,
+                        "type": "string"
+                    }
+                ]
+            }
+        },
+        "/{tenantId}/maps/{mapId}/embed": {
+            "get": {
+                "summary": "View map in iFrame",
+                "description": "View map as an application in iFrame",
+                "produces": [
+                    "application/json",
+                    "text/html"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "An HTML interactive map in an iFrame"
+                    }
+                },
+                "parameters": [
+                    {
+                        "name": "mapId",
+                        "in": "path",
+                        "description": "identifier of the map to fetch",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "name": "tenantId",
+                        "in": "path",
+                        "description": "tenant url paths",
+                        "required": true,
+                        "type": "string"
+                    }
+                ],
+                "tags": [
+                    "Maps"
+                ]
             }
         },
         "/{tenantId}/layers": {
@@ -137,19 +271,42 @@
                             }
                         }
                     }
-                }
+                },
+                "parameters": [
+                    {
+                        "name": "tenantId",
+                        "in": "path",
+                        "description": "tenant url paths",
+                        "required": true,
+                        "type": "string"
+                    }
+                ]
             },
             "post": {
                 "summary": "Create Layer",
                 "description": "Create a new layer",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
                 "parameters": [
                     {
-                        "name": "layer",
+                        "name": "body",
                         "in": "body",
-                        "description": "The geojson representation of the new layer to create",
+                        "description": "A geojson layer object",
                         "required": true,
-                        "type": "string",
-                        "format": "json"
+                        "schema": {
+                            "$ref": "#/definitions/Layer"
+                        }
+                    },
+                    {
+                        "name": "tenantId",
+                        "in": "path",
+                        "description": "tenant url paths",
+                        "required": true,
+                        "type": "string"
                     }
                 ],
                 "tags": [
@@ -157,7 +314,7 @@
                 ],
                 "responses": {
                     "201": {
-                        "description": "A copy of the geojson layer created.  Includes the generated id, and uri",
+                        "description": "A link to the new layer created.  Includes the generated id, and uri",
                         "schema": {
                             "type": "object"
                         }
@@ -167,52 +324,117 @@
         },
         "/{tenantId}/layers/{layerId}": {
             "get": {
-                "summary": "Get layer data",
-                "description": "Get layer (as json) for tenantId",
+                "summary": "Fetch Layer",
+                "description": "Fetch layer geojson",
+                "produces": [
+                    "application/json"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "The GeoJSON content"
+                    }
+                },
                 "parameters": [
                     {
-                        "name": "id",
-                        "in": "query",
-                        "description": "The id of the layer"
+                        "name": "layerId",
+                        "in": "path",
+                        "description": "identifier of the layer to fetch",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "name": "tenantId",
+                        "in": "path",
+                        "description": "tenant url paths",
+                        "required": true,
+                        "type": "string"
                     }
                 ],
                 "tags": [
                     "Layers"
+                ]
+            },
+            "put": {
+                "summary": "Update Layer",
+                "description": "replace the content of a Geojson layer",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
                 ],
                 "responses": {
                     "200": {
-                        "description": "The layer as json",
-                        "schema": {
-                            "type": "object"
-                        }
+                        "description": "successful operation"
                     }
-                }
-            }
-        },
-        "/{tenantId}/map-bundle": {
-            "post": {
-                "summary": "Create map+layer",
-                "description": "Create a new map and a new layer in one shot",
+                },
                 "parameters": [
                     {
-                        "name": "map",
-                        "in": "body",
-                        "description": "The geojson representation of the new map to create",
+                        "name": "tenantId",
+                        "in": "path",
+                        "description": "tenant url paths",
                         "required": true,
-                        "type": "string",
-                        "format": "json"
+                        "type": "string"
                     },
                     {
-                        "name": "layer",
-                        "in": "body",
-                        "description": "The geojson representation of the new layer to create",
+                        "name": "layerId",
+                        "in": "path",
+                        "description": "identifier of the layer to replace",
                         "required": true,
-                        "type": "string",
-                        "format": "json"
+                        "type": "string"
+                    }
+                ]
+            },
+            "delete": {
+                "summary": "delete layer",
+                "description": "deletes the layer",
+                "responses": {
+                    "200": {
+                        "description": "successful operation"
+                    }
+                },
+                "parameters": [
+                    {
+                        "name": "tenantId",
+                        "in": "path",
+                        "description": "tenant url paths",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "name": "layerId",
+                        "in": "path",
+                        "description": "identifier of the layer to delete",
+                        "required": true,
+                        "type": "string"
+                    }
+                ]
+            }
+        },
+        "/{tenantId}/mapbundle": {
+            "post": {
+                "summary": "Create Map & Layer",
+                "description": "Create a map with a layer in a single transaction",
+                "parameters": [
+                    {
+                        "name": "tenantId",
+                        "in": "path",
+                        "description": "tenant url paths",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "name": "body",
+                        "in": "body",
+                        "description": "An json object containing a map json and a layer goejson object",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/MapBundle"
+                        }
                     }
                 ],
                 "tags": [
-                    "map-bundle"
+                    "mapbundle"
                 ],
                 "responses": {
                     "201": {
@@ -228,28 +450,38 @@
             "get": {
                 "summary": "Geofence",
                 "description": "perform a geofence query on lthe tenants' layers",
+                "produces": [
+                    "application/json"
+                ],
                 "parameters": [
                     {
-                        "name": "relation",
+                        "name": "g",
                         "in": "query",
-                        "description": "A geospatial relationship to use in the query",
+                        "description": "Well Known Text (WKT) format of a geometry to use in the query",
                         "required": true,
                         "type": "string"
                     },
                     {
-                        "name": "g",
+                        "name": "relation",
                         "in": "query",
-                        "description": "A Well Known Text (WKT) format of the geometry to query with the relation parameter",
+                        "description": "A geospatial relationship to use with the geometry in the query",
                         "required": true,
-                        "type": "string"
-                         
+                        "type": "string",
+                        "format": "text"
                     },
                     {
                         "name": "include_geometries",
                         "in": "query",
-                        "description": "Include geometries in the result set. Default is false",
+                        "description": "A flag to include geometries in the result set",
                         "required": false,
                         "type": "boolean"
+                    },
+                    {
+                        "name": "tenantId",
+                        "in": "path",
+                        "description": "tenant url paths",
+                        "required": true,
+                        "type": "string"
                     }
                 ],
                 "tags": [
@@ -257,7 +489,7 @@
                 ],
                 "responses": {
                     "200": {
-                        "description": "A resultset as json object. The <b>rows</b> attribute contains an array of layers that satisfy the geofence query",
+                        "description": "A resultset as json object. The <b>rows</b> attribute contains an array of Map results",
                         "schema": {
                             "type": "object",
                             "properties": {
@@ -274,41 +506,58 @@
                         }
                     }
                 }
-            },
-            "post": {
-                "summary": "Create Map",
-                "description": "Create a new map",
-                "parameters": [
-                    {
-                        "name": "map",
-                        "in": "body",
-                        "description": "The geojson representation of the new map to create",
-                        "required": true,
-                        "type": "string",
-                        "format": "json"
-                    }
-                ],
-                "tags": [
-                    "Maps"
-                ],
-                "responses": {
-                    "201": {
-                        "description": "A link to the new map created.  Includes the generated id, and uri",
-                        "schema": {
-                            "type": "object"
-                        }
-                    }
+            }
+        }
+    },
+    "definitions": {
+        "Map": {
+            "type": "object",
+            "required": [
+                "title"
+            ],
+            "properties": {
+                "title": {
+                    "type": "string",
+                    "format": "text"
                 }
+            },
+            "xml": {
+                "name": "Map"
             }
         },
-        "definitions": {
-            "Map": {
-                "properties": {
-                    "mapId": {
-                        "type": "string",
-                        "description": "Unique identifier of the Map."
-                    }
+        "Layer": {
+            "type": "object",
+            "required": [
+                "title"
+            ],
+            "properties": {
+                "title": {
+                    "type": "string",
+                    "format": "text"
                 }
+            },
+            "xml": {
+                "name": "Map"
+            }
+        },
+        "MapBundle": {
+            "type": "object",
+            "required": [
+                "map",
+                "layer"
+            ],
+            "properties": {
+                "map": {
+                    "type": "string",
+                    "format": "json"
+                },
+                "layer": {
+                    "type": "string",
+                    "format": "json"
+                }
+            },
+            "xml": {
+                "name": "Map"
             }
         }
     }
