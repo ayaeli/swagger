@@ -3,7 +3,7 @@
     "info": {
         "title": "VaaS REST Apis",
         "description": "IBM Interactive Maps as-a-Service REST APIs",
-        "version": "1.0.2"
+        "version": "1.0.0"
     },
     "host": "vaas-ic.mybluemix.net",
     "schemes": [
@@ -184,6 +184,9 @@
                         "required": true,
                         "type": "string"
                     }
+                ],
+                "tags": [
+                    "Maps"
                 ]
             },
             "delete": {
@@ -209,6 +212,9 @@
                         "required": true,
                         "type": "string"
                     }
+                ],
+                "tags": [
+                    "Maps"
                 ]
             }
         },
