@@ -383,6 +383,9 @@
                         "required": true,
                         "type": "string"
                     }
+                ],
+                "tags": [
+                    "Layers"
                 ]
             },
             "delete": {
@@ -408,6 +411,9 @@
                         "required": true,
                         "type": "string"
                     }
+                ],
+                "tags": [
+                    "Layers"
                 ]
             }
         },
@@ -434,7 +440,7 @@
                     }
                 ],
                 "tags": [
-                    "mapbundle"
+                    "Mapbundle"
                 ],
                 "responses": {
                     "201": {
